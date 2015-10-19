@@ -1,0 +1,443 @@
+#!/usr/bin/env python
+
+import argparse
+import sys
+import os
+import stat
+
+
+class CreateRqtPkg:
+    def __init__(self, name, dependencies, class_name, namespace, file_name, author, email):
+
+        self.pkg_name = name
+        self.dependencies = dependencies
+        if class_name is not None:
+            self.class_name = class_name[0]
+        else:
+            self.class_name = 'View'
+        if namespace is not None:
+            self.namespace = namespace[0]
+        else:
+            self.namespace = self.pkg_name
+        if file_name is not None:
+            self.file_name = file_name[0]
+        else:
+            self.file_name = self.pkg_name
+        if author is not None:
+            self.author = author[0]
+        else:
+            self.author = 'Author'
+        if email is not None:
+            self.email = email[0]
+        else:
+            self.email = 'bla@bla.com'
+
+        self.path = self.pkg_name
+        self.path_src = self.path + '/src/' + self.pkg_name
+        self.path_include = self.path + '/include/' + self.pkg_name
+        self.path_resource = self.path + '/resource'
+        self.path_scripts = self.path + '/scripts'
+        self.path_launch = self.path + '/launch'
+
+        self.mkdir()
+        self.create_build_files()
+        self.create_code_files()
+
+    def mkdir(self):
+        if os.path.exists(self.path):
+            print('package ' + self.pkg_name + ' exist already!')
+            sys.exit(0)
+
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+        if not os.path.exists(self.path_src):
+            os.makedirs(self.path_src)
+        if not os.path.exists(self.path_include):
+            os.makedirs(self.path_include)
+        if not os.path.exists(self.path_resource):
+            os.makedirs(self.path_resource)
+        if not os.path.exists(self.path_scripts):
+            os.makedirs(self.path_scripts)
+        if not os.path.exists(self.path_launch):
+            os.makedirs(self.path_launch)
+
+    def create_build_files(self):
+        # setup.py
+        try:
+            file_setup = open(self.path + "/setup.py", 'w')
+        except (OSError, IOError):
+            print('could not create setup.py')
+            sys.exit(0)
+
+        file_setup.write('')
+        file_setup.write('#!/usr/bin/env python' + '\n')
+        file_setup.write('\n')
+        file_setup.write('from distutils.core import setup' + '\n')
+        file_setup.write('from catkin_pkg.python_setup import generate_distutils_setup' + '\n')
+        file_setup.write('\n')
+        file_setup.write('d = generate_distutils_setup(' + '\n')
+        file_setup.write('    packages=[\'' + self.pkg_name + '\'],' + '\n')
+        file_setup.write('    package_dir={\'\': \'src\'}' + '\n')
+        file_setup.write(')' + '\n')
+        file_setup.write('\n')
+        file_setup.write('setup(**d)' + '\n')
+
+        # plugin.xml
+        try:
+            file_plugin = open(self.path + "/plugin.xml", 'w')
+        except (OSError, IOError):
+            print('could not create plugin.xml')
+            sys.exit(0)
+
+        file_plugin.write('<library path="lib/lib' + self.pkg_name + '">' + '\n')
+        file_plugin.write('  <class name="' + self.namespace + '/' + self.class_name + '" ' +
+                          'type="' + self.namespace + '::' + self.class_name +
+                          '" base_class_type="rqt_gui_cpp::Plugin">' + '\n')
+        file_plugin.write('    <description>' + '\n')
+        file_plugin.write('      A GUI plugin to ...' + '\n')
+        file_plugin.write('    </description>' + '\n')
+        file_plugin.write('    <qtgui>' + '\n')
+        file_plugin.write('      <group>' + '\n')
+        file_plugin.write('        <label>New Group</label>' + '\n')
+        file_plugin.write('        <icon type="theme">folder</icon>' + '\n')
+        file_plugin.write('        <statustip>Plugins related to...</statustip>' + '\n')
+        file_plugin.write('      </group>' + '\n')
+        file_plugin.write('      <label>RQT Plugin ' + self.pkg_name + '</label>' + '\n')
+        file_plugin.write('      <icon type="theme">image-x-generic</icon>' + '\n')
+        file_plugin.write('      <statustip>A GUI plugin to ...</statustip>' + '\n')
+        file_plugin.write('    </qtgui>' + '\n')
+        file_plugin.write('  </class>' + '\n')
+        file_plugin.write('</library>' + '\n')
+
+        # package.xml
+        try:
+            file_package = open(self.path + "/package.xml", 'w')
+        except (OSError, IOError):
+            print('could not create package.xml')
+            sys.exit(0)
+
+        file_package.write('<package>' + '\n')
+        file_package.write('  <name>' + self.pkg_name + '</name>' + '\n')
+        file_package.write('  <version>0.3.10</version>' + '\n')
+        file_package.write('  <description>' + self.pkg_name + ' provides a GUI plugin to ...</description>' + '\n')
+        file_package.write('' + '\n')
+        file_package.write('  <maintainer email="bla@bla.com">' + self.author + '</maintainer>' + '\n')
+        file_package.write('  <license>TODO</license>' + '\n')
+        file_package.write('  <!-- <url type="website">http://www.bla.com</url> -->' + '\n')
+        file_package.write('  <author email="' + self.email + '">' + self.author + '</author>' + '\n')
+        file_package.write('' + '\n')
+        file_package.write('  <buildtool_depend>catkin</buildtool_depend>' + '\n')
+        file_package.write('' + '\n')
+        file_package.write('  <build_depend>rqt_gui</build_depend>' + '\n')
+        file_package.write('  <build_depend>rqt_gui_cpp</build_depend>' + '\n')
+        for i in range(0, len(self.dependencies)):
+            file_package.write('  <build_depend>' + self.dependencies[i] + '</build_depend>' + '\n')
+        file_package.write('' + '\n')
+        file_package.write('  <run_depend>rqt_gui</run_depend>' + '\n')
+        file_package.write('  <run_depend>rqt_gui_cpp</run_depend>' + '\n')
+        for i in range(0, len(self.dependencies)):
+            file_package.write('  <run_depend>' + self.dependencies[i] + '</run_depend>' + '\n')
+        file_package.write('' + '\n')
+        file_package.write('  <export>' + '\n')
+        file_package.write('    <rqt_gui plugin="${prefix}/plugin.xml"/>' + '\n')
+        file_package.write('  </export>' + '\n')
+        file_package.write('</package>' + '\n')
+
+        # CMakeLists.txt
+        try:
+            file_cmake = open(self.path + "/CMakeLists.txt", 'w')
+        except (OSError, IOError):
+            print('could not create CMakeLists.txt')
+            sys.exit(0)
+
+        file_cmake.write('cmake_minimum_required(VERSION 2.8.3)' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('project(' + self.pkg_name + ')' + '\n')
+        file_cmake.write('# Load catkin and all dependencies required for this package' + '\n')
+        file_cmake.write('find_package(catkin REQUIRED COMPONENTS' + '\n')
+        file_cmake.write('  rqt_gui' + '\n')
+        file_cmake.write('  rqt_gui_cpp' + '\n')
+        for i in range(0, len(self.dependencies)):
+            file_cmake.write('  ' + self.dependencies[i] + '\n')
+        file_cmake.write(')' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('# Flags' + '\n')
+        file_cmake.write('SET(CMAKE_CXX_FLAGS "-std=c++11")' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('include(${QT_USE_FILE})' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('set(${PROJECT_NAME}_SRCS' + '\n')
+        file_cmake.write('  src/${PROJECT_NAME}/' + self.file_name + '.cpp' + '\n')
+        file_cmake.write(')' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('set(${PROJECT_NAME}_HDRS' + '\n')
+        file_cmake.write('  include/${PROJECT_NAME}/' + self.file_name + '.h' + '\n')
+        file_cmake.write(')' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('set(${PROJECT_NAME}_UIS' + '\n')
+        file_cmake.write('  resource/' + self.file_name + '.ui' + '\n')
+        file_cmake.write(')' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('set(${PROJECT_NAME}_INCLUDE_DIRECTORIES' + '\n')
+        file_cmake.write('  include' + '\n')
+        file_cmake.write('  ${CMAKE_CURRENT_BINARY_DIR}' + '\n')
+        file_cmake.write(')' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('catkin_package(' + '\n')
+        file_cmake.write('  INCLUDE_DIRS include' + '\n')
+        file_cmake.write('#  LIBRARIES ${PROJECT_NAME}' + '\n')
+        file_cmake.write('  CATKIN_DEPENDS rqt_gui rqt_gui_cpp')
+        for i in range(0, len(self.dependencies)):
+            file_cmake.write(' ' + self.dependencies[i])
+        file_cmake.write('\n')
+        file_cmake.write(')' + '\n')
+        file_cmake.write('catkin_python_setup()' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('qt4_wrap_cpp(${PROJECT_NAME}_MOCS ${${PROJECT_NAME}_HDRS})' + '\n')
+        file_cmake.write('qt4_wrap_ui(${PROJECT_NAME}_UIS_H ${${PROJECT_NAME}_UIS})' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('include_directories(${${PROJECT_NAME}_INCLUDE_DIRECTORIES} \n'
+                         '  ${catkin_INCLUDE_DIRS} \n'
+                         '  include \n'
+                         ')' + '\n\n')
+        file_cmake.write('add_library(${PROJECT_NAME}' + '\n')
+        file_cmake.write('  ${${PROJECT_NAME}_SRCS}' + '\n')
+        file_cmake.write('  ${${PROJECT_NAME}_HDRS}' + '\n')
+        file_cmake.write('  ${${PROJECT_NAME}_MOCS}' + '\n')
+        file_cmake.write('  ${${PROJECT_NAME}_UIS_H}' + '\n')
+        file_cmake.write(')' + '\n')
+        file_cmake.write('target_link_libraries(${PROJECT_NAME}' + '\n')
+        file_cmake.write('  ${catkin_LIBRARIES}' + '\n')
+        file_cmake.write('  ${QT_QTCORE_LIBRARY}' + '\n')
+        file_cmake.write('  ${QT_QTGUI_LIBRARY}' + '\n')
+        file_cmake.write(')' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('find_package(class_loader)' + '\n')
+        file_cmake.write('class_loader_hide_library_symbols(${PROJECT_NAME})' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('install(FILES plugin.xml' + '\n')
+        file_cmake.write('  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}' + '\n')
+        file_cmake.write(')' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('install(TARGETS ${PROJECT_NAME}' + '\n')
+        file_cmake.write('  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}' + '\n')
+        file_cmake.write('  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}' + '\n')
+        file_cmake.write('  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}' + '\n')
+        file_cmake.write(')' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('install(PROGRAMS scripts/${PROJECT_NAME}' + '\n')
+        file_cmake.write('  DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}' + '\n')
+        file_cmake.write(')' + '\n')
+        file_cmake.write('install(PROGRAMS scripts/${PROJECT_NAME}' + '\n')
+        file_cmake.write('  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}' + '\n')
+        file_cmake.write(')' + '\n')
+        file_cmake.write('' + '\n')
+        file_cmake.write('install(DIRECTORY include/${PROJECT_NAME}/' + '\n')
+        file_cmake.write('  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}' + '\n')
+        file_cmake.write(')' + '\n')
+
+        # scripts
+        try:
+            file_scripts = open(self.path_scripts + '/' + self.pkg_name, 'w')
+        except (OSError, IOError):
+            print('could not create script ' + self.pkg_name + '')
+            sys.exit(0)
+
+        file_scripts.write('#!/usr/bin/env python' + '\n')
+        file_scripts.write('' + '\n')
+        file_scripts.write('import sys' + '\n')
+        file_scripts.write('' + '\n')
+        file_scripts.write('from rqt_gui.main import Main' + '\n')
+        file_scripts.write('' + '\n')
+        file_scripts.write('main = Main()' + '\n')
+        file_scripts.write('sys.exit(main.main(sys.argv, standalone=\'' + self.namespace + '/' + self.class_name +
+                           '\'))' + '\n')
+        file_scripts.close()
+        # make script executable
+        st = os.stat(self.path_scripts + '/' + self.pkg_name)
+        os.chmod(self.path_scripts + '/' + self.pkg_name, st.st_mode | stat.S_IEXEC)
+
+    def create_code_files(self):
+        # cpp
+        try:
+            file_cpp = open(self.path_src + '/' + self.file_name + '.cpp', 'w')
+        except (OSError, IOError):
+            print('could not create ' + self.path_src + '/' + self.file_name + '.cpp')
+            sys.exit(0)
+
+        file_cpp.write('#include "' + self.pkg_name + '/' + self.file_name + '.h"' + '\n')
+        file_cpp.write('' + '\n')
+        file_cpp.write('#include <pluginlib/class_list_macros.h>' + '\n')
+        file_cpp.write('#include <ros/master.h>' + '\n')
+        file_cpp.write('' + '\n')
+        file_cpp.write('namespace ' + self.namespace + ' {' + '\n')
+        file_cpp.write('' + '\n')
+        file_cpp.write('' + self.class_name + '::' + self.class_name + '()' + '\n')
+        file_cpp.write('    : rqt_gui_cpp::Plugin()' + '\n')
+        file_cpp.write('    , widget_(0) {' + '\n')
+        file_cpp.write('' + '\n')
+        file_cpp.write('    setObjectName("' + self.class_name + '");' + '\n')
+        file_cpp.write('}' + '\n')
+        file_cpp.write('' + '\n')
+        file_cpp.write('void ' + self.class_name + '::initPlugin(qt_gui_cpp::PluginContext& context) {' + '\n')
+        file_cpp.write('    widget_ = new QWidget();' + '\n')
+        file_cpp.write('    ui_.setupUi(widget_);' + '\n')
+        file_cpp.write('    if (context.serialNumber() > 1) {' + '\n')
+        file_cpp.write('        widget_->setWindowTitle(widget_->windowTitle() + '
+                       '" (" + QString::number(context.serialNumber()) + ")");' + '\n')
+        file_cpp.write('    }' + '\n')
+        file_cpp.write('    context.addWidget(widget_);' + '\n')
+        file_cpp.write('}' + '\n')
+        file_cpp.write('' + '\n')
+        file_cpp.write('void ' + self.class_name + '::shutdownPlugin() {' + '\n')
+        file_cpp.write('}' + '\n')
+        file_cpp.write('' + '\n')
+        file_cpp.write('void ' + self.class_name + '::saveSettings(qt_gui_cpp::Settings& plugin_settings,' + '\n')
+        file_cpp.write('                               qt_gui_cpp::Settings& instance_settings) const {' + '\n')
+        file_cpp.write('}' + '\n')
+        file_cpp.write('' + '\n')
+        file_cpp.write('void ' + self.class_name + '::restoreSettings(const qt_gui_cpp::Settings& plugin_settings,' +
+                       '\n')
+        file_cpp.write('                                  const qt_gui_cpp::Settings& instance_settings) {' + '\n')
+        file_cpp.write('}' + '\n')
+        file_cpp.write('' + '\n')
+        file_cpp.write('} // namespace' + '\n')
+        file_cpp.write('' + '\n')
+        file_cpp.write('PLUGINLIB_EXPORT_CLASS(' + self.namespace + '::' + self.class_name + ', rqt_gui_cpp::Plugin)' +
+                       '\n')
+
+        # h
+        try:
+            file_h = open(self.path_include + '/' + self.file_name + '.h', 'w')
+        except (OSError, IOError):
+            print('could not create ' + self.path_include + '/' + self.file_name + '.h')
+            sys.exit(0)
+
+        file_h.write('#pragma once' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('#include <rqt_gui_cpp/plugin.h>' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('#include <ui_' + self.file_name + '.h>' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('#include <ros/ros.h>' + '\n')
+        file_h.write('#include <ros/master.h>' + '\n')
+        file_h.write('#include <ros/macros.h>' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('#include <QWidget>' + '\n')
+        file_h.write('#include <QObject>' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('namespace ' + self.namespace + ' {' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('class ' + self.class_name + '' + '\n')
+        file_h.write('    : public rqt_gui_cpp::Plugin {' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('    Q_OBJECT' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('private:' + '\n')
+        file_h.write('    const char* TAG = "mission_monitor";' + '\n')
+        file_h.write('public:' + '\n')
+        file_h.write('    /**' + '\n')
+        file_h.write('     * @brief ' + self.class_name + '::' + self.class_name + '' + '\n')
+        file_h.write('     */' + '\n')
+        file_h.write('    ' + self.class_name + '();' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('    /**' + '\n')
+        file_h.write('     * @brief ' + self.class_name + '::initPlugin' + '\n')
+        file_h.write('     * @param context' + '\n')
+        file_h.write('     */' + '\n')
+        file_h.write('    virtual void initPlugin(qt_gui_cpp::PluginContext& context);' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('    /**' + '\n')
+        file_h.write('     * @brief ' + self.class_name + '::shutdownPlugin' + '\n')
+        file_h.write('     */' + '\n')
+        file_h.write('    virtual void shutdownPlugin();' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('    /**' + '\n')
+        file_h.write('     * @brief ' + self.class_name + '::saveSettings' + '\n')
+        file_h.write('     * @param plugin_settings' + '\n')
+        file_h.write('     * @param instance_settings' + '\n')
+        file_h.write('     */' + '\n')
+        file_h.write('    virtual void saveSettings(qt_gui_cpp::Settings& plugin_settings,' + '\n')
+        file_h.write('                              qt_gui_cpp::Settings& instance_settings) const;' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('    /**' + '\n')
+        file_h.write('     * @brief ' + self.class_name + '::restoreSettings' + '\n')
+        file_h.write('     * @param plugin_settings' + '\n')
+        file_h.write('     * @param instance_settings' + '\n')
+        file_h.write('     */' + '\n')
+        file_h.write('    virtual void restoreSettings(const qt_gui_cpp::Settings& plugin_settings,' + '\n')
+        file_h.write('                                 const qt_gui_cpp::Settings& instance_settings);' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('protected slots:' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('protected:' + '\n')
+        file_h.write('    Ui::' + self.class_name + 'Widget ui_;' + '\n')
+        file_h.write('    QWidget* widget_;' + '\n')
+        file_h.write('    ros::NodeHandle nh_;' + '\n')
+        file_h.write('};' + '\n')
+        file_h.write('' + '\n')
+        file_h.write('} // namespace' + '\n')
+
+        # ui
+        try:
+            file_ui = open(self.path_resource + '/' + self.file_name + '.ui', 'w')
+        except (OSError, IOError):
+            print('could not create ' + self.path_resource + '/' + self.file_name + '.ui')
+            sys.exit(0)
+
+        file_ui.write('<?xml version="1.0" encoding="UTF-8"?>' + '\n')
+        file_ui.write('<ui version="4.0">' + '\n')
+        file_ui.write(' <class>' + self.class_name + 'Widget</class>' + '\n')
+        file_ui.write(' <widget class="QWidget" name="' + self.class_name + 'Widget">' + '\n')
+        file_ui.write('  <property name="enabled">' + '\n')
+        file_ui.write('   <bool>true</bool>' + '\n')
+        file_ui.write('  </property>' + '\n')
+        file_ui.write('  <property name="geometry">' + '\n')
+        file_ui.write('   <rect>' + '\n')
+        file_ui.write('    <x>0</x>' + '\n')
+        file_ui.write('    <y>0</y>' + '\n')
+        file_ui.write('    <width>558</width>' + '\n')
+        file_ui.write('    <height>376</height>' + '\n')
+        file_ui.write('   </rect>' + '\n')
+        file_ui.write('  </property>' + '\n')
+        file_ui.write('  <property name="windowTitle">' + '\n')
+        file_ui.write('   <string>' + self.pkg_name + '</string>' + '\n')
+        file_ui.write('  </property>' + '\n')
+        file_ui.write('  <layout class="QVBoxLayout" name="verticalLayout"/>' + '\n')
+        file_ui.write(' </widget>' + '\n')
+        file_ui.write(' <resources/>' + '\n')
+        file_ui.write(' <connections/>' + '\n')
+        file_ui.write('</ui>' + '\n')
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description='Creates a new catkin rqt plugin package',
+        epilog='')
+    parser.add_argument('name',
+                        nargs=1,
+                        help='The name for the package')
+    parser.add_argument('dependencies',
+                        nargs='*',
+                        help='Catkin package Dependencies')
+    parser.add_argument('-c', '--class_name',
+                        action='append',
+                        help='Give the base rqt_plugin class a custom name (default = View)')
+    parser.add_argument('-n', '--namespace',
+                        action='append',
+                        help='Rename the namespace (default = package name)')
+    parser.add_argument('-f', '--file_name',
+                        action='append',
+                        help='Rename the files .cpp/.h/.ui (default = package name)')
+    parser.add_argument('-a', '--author',
+                        action='append',
+                        help='Author in package.xml')
+    parser.add_argument('-e', '--email',
+                        action='append',
+                        help='Email address in package.xml')
+    args = parser.parse_args()
+
+    rqt = CreateRqtPkg(args.name[0], args.dependencies, args.class_name, args.namespace, args.file_name,
+                       args.author, args.email)
