@@ -81,6 +81,7 @@ class CreateRqtPkg:
         file_setup.write(')' + '\n')
         file_setup.write('\n')
         file_setup.write('setup(**d)' + '\n')
+        file_setup.close()
 
         # plugin.xml
         try:
@@ -108,6 +109,7 @@ class CreateRqtPkg:
         file_plugin.write('    </qtgui>' + '\n')
         file_plugin.write('  </class>' + '\n')
         file_plugin.write('</library>' + '\n')
+        file_plugin.close()
 
         # package.xml
         try:
@@ -142,6 +144,7 @@ class CreateRqtPkg:
         file_package.write('    <rqt_gui plugin="${prefix}/plugin.xml"/>' + '\n')
         file_package.write('  </export>' + '\n')
         file_package.write('</package>' + '\n')
+        file_package.close()
 
         # CMakeLists.txt
         try:
@@ -237,6 +240,7 @@ class CreateRqtPkg:
         file_cmake.write('install(DIRECTORY include/${PROJECT_NAME}/' + '\n')
         file_cmake.write('  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}' + '\n')
         file_cmake.write(')' + '\n')
+        file_cmake.close()
 
         # scripts
         try:
@@ -307,6 +311,7 @@ class CreateRqtPkg:
         file_cpp.write('' + '\n')
         file_cpp.write('PLUGINLIB_EXPORT_CLASS(' + self.namespace + '::' + self.class_name + ', rqt_gui_cpp::Plugin)' +
                        '\n')
+        file_cpp.close()
 
         # h
         try:
@@ -377,6 +382,7 @@ class CreateRqtPkg:
         file_h.write('};' + '\n')
         file_h.write('' + '\n')
         file_h.write('} // namespace' + '\n')
+        file_h.close()
 
         # ui
         try:
@@ -408,6 +414,7 @@ class CreateRqtPkg:
         file_ui.write(' <resources/>' + '\n')
         file_ui.write(' <connections/>' + '\n')
         file_ui.write('</ui>' + '\n')
+        file_ui.close()
 
 
 if __name__ == '__main__':
