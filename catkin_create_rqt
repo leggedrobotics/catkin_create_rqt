@@ -335,8 +335,6 @@ class CreateRqtPkg:
         file_h.write('' + '\n')
         file_h.write('    Q_OBJECT' + '\n')
         file_h.write('' + '\n')
-        file_h.write('private:' + '\n')
-        file_h.write('    const char* TAG = "mission_monitor";' + '\n')
         file_h.write('public:' + '\n')
         file_h.write('    /**' + '\n')
         file_h.write('     * @brief ' + self.class_name + '::' + self.class_name + '' + '\n')
