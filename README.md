@@ -18,9 +18,11 @@ Example call:
                              [-a AUTHOR] [-e EMAIL]
                              name [dependencies [dependencies ...]]
 
-- [-h, --help] shows the help message and exits
-- [-c, --class_name] rename the used class name
-- [-n, --namespace] rename the used namespace
-- [-f, --file_name] rename the file names (file_name.cpp, .h, .ui)
-- [-a, --author] define author in package.xml
-- [-e, --email] define email address in package.xml
+| Parameter           | Description                                      |
+| ------------------- | ------------------------------------------------ |
+| [-h, --help]        | shows the help message and exits                 |
+| [-c, --class_name]  | rename the used class name                       |
+| [-n, --namespace]   | rename the used namespace                        |
+| [-f, --file_name]   | rename the file names (file_name.cpp, .h, .ui)   |
+| [-a, --author]      | define author in package.xml                     |
+| [-e, --email]       | define email address in package.xml              |
