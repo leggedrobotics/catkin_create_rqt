@@ -263,6 +263,21 @@ class CreateRqtPkg:
         st = os.stat(self.path_scripts + '/' + self.pkg_name)
         os.chmod(self.path_scripts + '/' + self.pkg_name, st.st_mode | stat.S_IEXEC)
 
+        # launch
+        try:
+            file_launch = open(self.path_launch + '/' + self.pkg_name + '.launch', 'w')
+        except (OSError, IOError):
+            print('could not create script ' + self.path_launch + '/' + self.pkg_name + '.launch')
+            sys.exit(0)
+
+        file_launch.write('<!--xml-->' + '\n')
+        file_launch.write('<launch>' + '\n')
+        file_launch.write('    <node pkg="' + self.pkg_name + '" type="' + self.pkg_name +
+                          '" name="' + self.pkg_name + '_node" output="screen">' + '\n')
+        file_launch.write('    </node>' + '\n')
+        file_launch.write('</launch>' + '\n')
+        file_launch.close()
+
     def create_code_files(self):
         # cpp
         try:
