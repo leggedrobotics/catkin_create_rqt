@@ -7,10 +7,14 @@ import stat
 
 
 class CreateRqtPkg:
-    def __init__(self, name, dependencies, class_name, namespace, file_name, author, email):
+    def __init__(self, name, dependencies, path, class_name, namespace, file_name, author, email):
 
         self.pkg_name = name
         self.dependencies = dependencies
+        if path is not None:
+            self.path_root = os.path.abspath(path[0]) + '/'
+        else:
+            self.path_root = ''
         if class_name is not None:
             self.class_name = class_name[0]
         else:
@@ -32,7 +36,7 @@ class CreateRqtPkg:
         else:
             self.email = 'bla@bla.com'
 
-        self.path = self.pkg_name
+        self.path = self.path_root + self.pkg_name
         self.path_src = self.path + '/src/' + self.pkg_name
         self.path_include = self.path + '/include/' + self.pkg_name
         self.path_resource = self.path + '/resource'
@@ -438,6 +442,9 @@ if __name__ == '__main__':
     parser.add_argument('dependencies',
                         nargs='*',
                         help='Catkin package Dependencies')
+    parser.add_argument('-p', '--path',
+                        action='append',
+                        help='The path into which the package should be generated')
     parser.add_argument('-c', '--class_name',
                         action='append',
                         help='Give the base rqt_plugin class a custom name (default = View)')
@@ -455,5 +462,5 @@ if __name__ == '__main__':
                         help='Email address in package.xml')
     args = parser.parse_args()
 
-    rqt = CreateRqtPkg(args.name[0], args.dependencies, args.class_name, args.namespace, args.file_name,
+    rqt = CreateRqtPkg(args.name[0], args.dependencies, args.path, args.class_name, args.namespace, args.file_name,
                        args.author, args.email)
