@@ -136,7 +136,7 @@ class CreateRqtPkg:
         file_package.write('  <version>0.3.10</version>' + '\n')
         file_package.write('  <description>' + self.pkg_name + ' provides a GUI plugin to ...</description>' + '\n')
         file_package.write('' + '\n')
-        file_package.write('  <maintainer email="bla@bla.com">' + self.author + '</maintainer>' + '\n')
+        file_package.write('  <maintainer email="' + self.email + '">' + self.author + '</maintainer>' + '\n')
         file_package.write('  <license>TODO</license>' + '\n')
         file_package.write('  <!-- <url type="website">http://www.bla.com</url> -->' + '\n')
         file_package.write('  <author email="' + self.email + '">' + self.author + '</author>' + '\n')
