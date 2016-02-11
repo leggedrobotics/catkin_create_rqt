@@ -312,7 +312,7 @@ class CreateRqtPkg:
             print('could not create script ' + self.path_launch + '/' + self.pkg_name + '.launch')
             sys.exit(0)
 
-        file_launch.write('<!--xml-->' + '\n')
+        file_launch.write('<?xml version="1.0" encoding="UTF-8"?>' + '\n')
         file_launch.write('<launch>' + '\n')
         file_launch.write('    <node pkg="' + self.pkg_name + '" type="' + self.pkg_name +
                           '" name="' + self.pkg_name + '_node" output="screen">' + '\n')
