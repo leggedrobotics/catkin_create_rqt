@@ -221,7 +221,6 @@ class CreateRqtPkg:
                 file_cmake.write(' ' + self.dependencies[i])
             file_cmake.write('\n')
             file_cmake.write(')' + '\n')
-            file_cmake.write('catkin_python_setup()' + '\n')
             file_cmake.write('' + '\n')
             file_cmake.write('if ("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")' + '\n')
             file_cmake.write('  qt5_wrap_cpp(${PROJECT_NAME}_MOCS ${${PROJECT_NAME}_HDRS})' + '\n')
