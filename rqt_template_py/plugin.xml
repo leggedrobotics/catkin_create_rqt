@@ -1,0 +1,18 @@
+<library path="src">
+  <class name="${class_name}" type="${pkg_name}.${file_name}.${class_name}"
+         base_class_type="rqt_gui_py::Plugin">
+    <description>
+      A GUI plugin to ...
+    </description>
+    <qtgui>
+      <group>
+        <label>New Group</label>
+        <icon type="theme">folder</icon>
+        <statustip>Plugins related to...</statustip>
+      </group>
+      <label>RQT Plugin ${pkg_name}</label>
+      <icon type="theme">image-x-generic</icon>
+      <statustip>A GUI plugin to ...</statustip>
+    </qtgui>
+  </class>
+</library>

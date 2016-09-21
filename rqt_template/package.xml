@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package format="2">
+  <name>${pkg_name}</name>
+  <version>0.3.10</version>
+  <description>${pkg_name} provides a GUI plugin to ...</description>
+
+  <maintainer email="${email}">${author}</maintainer>
+  <license>TODO</license>
+  <!-- <url type="website">http://www.bla.com</url> -->
+  <author email="${email}">${author}</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>rqt_gui</depend>
+  <depend>rqt_gui_cpp</depend>
+${dependencies_xml}
+
+  <export>
+    <rqt_gui plugin="$${prefix}/plugin.xml"/>
+  </export>
+</package>

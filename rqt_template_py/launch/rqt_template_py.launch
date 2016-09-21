@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node pkg="${pkg_name}" type="${pkg_name}" name="${pkg_name}_node"
+        output="screen">
+  </node>
+</launch>
