@@ -8,7 +8,8 @@ import stat
 from string import Template
 
 class CreateRqtPkg:
-    def __init__(self, name, dependencies, path, class_name, namespace, file_name, author, email, is_python):
+    def __init__(self, name, dependencies, path, class_name, namespace,
+                 file_name, author, email, is_python):
 
         self.pkg_name = name
         self.dependencies = dependencies
@@ -27,7 +28,7 @@ class CreateRqtPkg:
         if file_name is not None:
             self.file_name = file_name[0]
         else:
-            self.file_name = self.pkg_name
+            self.file_name = self.class_name
         if author is not None:
             self.author = author[0]
         else:
@@ -35,7 +36,7 @@ class CreateRqtPkg:
         if email is not None:
             self.email = email[0]
         else:
-            self.email = 'bla@bla.com'
+            self.email = 'blah@blah.com'
         self.is_python = is_python
 
         dependencies_1 = ""
@@ -162,7 +163,8 @@ class CreateRqtPkg:
         file_scripts.close()
         # make script executable
         st = os.stat(self.path_scripts + '/' + self.pkg_name)
-        os.chmod(self.path_scripts + '/' + self.pkg_name, st.st_mode | stat.S_IEXEC)
+        os.chmod(self.path_scripts + '/' + self.pkg_name,
+                 st.st_mode | stat.S_IEXEC)
 
         # launch
         try:
@@ -185,9 +187,11 @@ class CreateRqtPkg:
         if not self.is_python:
             # cpp
             try:
-                file_cpp = open(self.path_src + '/' + self.file_name + '.cpp', 'w')
+                file_cpp = open(self.path_src + '/' + self.file_name + '.cpp',
+                                'w')
             except (OSError, IOError):
-                print('could not create ' + self.path_src + '/' + self.file_name + '.cpp')
+                print('could not create ' + self.path_src + '/' +
+                      self.file_name + '.cpp')
                 sys.exit(0)
 
             file_in = open('rqt_template/src/rqt_template/Template.cpp')
@@ -197,9 +201,11 @@ class CreateRqtPkg:
 
             # h
             try:
-                file_h = open(self.path_include + '/' + self.file_name + '.h', 'w')
+                file_h = open(self.path_include + '/' + self.file_name + '.h',
+                              'w')
             except (OSError, IOError):
-                print('could not create ' + self.path_include + '/' + self.file_name + '.h')
+                print('could not create ' + self.path_include + '/' +
+                      self.file_name + '.h')
                 sys.exit(0)
 
             file_in = open('rqt_template/include/rqt_template/Template.h')
@@ -210,9 +216,11 @@ class CreateRqtPkg:
         else:
             # py
             try:
-                file_py = open(self.path_src + '/' + self.file_name + '.py', 'w')
+                file_py = open(self.path_src + '/' + self.file_name + '.py',
+                               'w')
             except (OSError, IOError):
-                print('could not create ' + self.path_src + '/' + self.file_name + '.py')
+                print('could not create ' + self.path_src + '/' +
+                      self.file_name + '.py')
                 sys.exit(0)
 
             file_in = open('rqt_template_py/src/rqt_template_py/Template.py')
@@ -231,11 +239,14 @@ class CreateRqtPkg:
         # ui
         try:
             if not self.is_python:
-                file_ui = open(self.path_resource + '/' + self.file_name + '.ui', 'w')
+                file_ui = open(self.path_resource + '/' + self.file_name +
+                               '.ui', 'w')
             else:
-                file_ui = open(self.path_src + '/' + self.class_name + '.ui', 'w')
+                file_ui = open(self.path_src + '/' + self.class_name + '.ui',
+                               'w')
         except (OSError, IOError):
-            print('could not create ' + self.path_resource + '/' + self.file_name + '.ui')
+            print('could not create ' + self.path_resource + '/' +
+                  self.file_name + '.ui')
             sys.exit(0)
 
         if not self.is_python:
@@ -259,16 +270,19 @@ if __name__ == '__main__':
                         help='Catkin package Dependencies')
     parser.add_argument('-p', '--path',
                         action='append',
-                        help='The path into which the package should be generated')
+                        help='The path into which the package should be '
+                             'generated')
     parser.add_argument('-c', '--class_name',
                         action='append',
-                        help='Give the base rqt_plugin class a custom name (default = View)')
+                        help='Give the base rqt_plugin class a custom name '
+                             '(default = View)')
     parser.add_argument('-n', '--namespace',
                         action='append',
                         help='Rename the namespace (default = package name)')
     parser.add_argument('-f', '--file_name',
                         action='append',
-                        help='Rename the files .cpp/.h/.ui (default = package name)')
+                        help='Rename the files .cpp/.h/.ui (default = class '
+                             'name)')
     parser.add_argument('-a', '--author',
                         action='append',
                         help='Author in package.xml')
@@ -281,5 +295,6 @@ if __name__ == '__main__':
                         help='Generate python rqt package')
     args = parser.parse_args()
 
-    rqt = CreateRqtPkg(args.name[0], args.dependencies, args.path, args.class_name, args.namespace, args.file_name,
+    rqt = CreateRqtPkg(args.name[0], args.dependencies, args.path,
+                       args.class_name, args.namespace, args.file_name,
                        args.author, args.email, args.is_python)

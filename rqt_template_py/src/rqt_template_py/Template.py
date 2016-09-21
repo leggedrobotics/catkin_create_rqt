@@ -28,7 +28,8 @@ class ${class_name}(Plugin):
         self._widget = QWidget()
         # Get path to UI file which is a sibling of this file
         # in this example the .ui and .py file are in the same folder
-        ui_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), '${class_name}.ui')
+        ui_file = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                               '${class_name}.ui')
         # Extend the widget with all attributes and children from UI file
         loadUi(ui_file, self._widget)
         # Give QObjects reasonable names
@@ -39,7 +40,8 @@ class ${class_name}(Plugin):
         # plugin at once, these lines add number to make it easy to
         # tell from pane to pane.
         if context.serial_number() > 1:
-            self._widget.setWindowTitle(self._widget.windowTitle() + (' (%d)' % context.serial_number()))
+            self._widget.setWindowTitle(self._widget.windowTitle() +
+                                        (' (%d)' % context.serial_number()))
         # Add widget to the user interface
         context.add_widget(self._widget)
 
@@ -59,5 +61,6 @@ class ${class_name}(Plugin):
 
     # def trigger_configuration(self):
         # Comment in to signal that the plugin has a way to configure
-        # This will enable a setting button (gear icon) in each dock widget title bar
+        # This will enable a setting button (gear icon) in each dock widget
+        # title bar
         # Usually used to open a modal configuration dialog
