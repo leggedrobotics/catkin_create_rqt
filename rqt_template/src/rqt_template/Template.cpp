@@ -1,4 +1,4 @@
-#include "${pkg_name}/${class_name}.h"
+#include "${pkg_name}/${file_name}.h"
 
 #include <pluginlib/class_list_macros.h>
 
