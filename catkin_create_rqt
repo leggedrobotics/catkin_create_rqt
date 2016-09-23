@@ -15,7 +15,7 @@ class CreateRqtPkg:
         self.pkg_name = name
         self.dependencies = dependencies
         if path is not None:
-            self.path_root = os.path.abspath(path[0]) + '/'
+            self.path_root = os.path.abspath(path[0])
         else:
             self.path_root = ''
         if class_name is not None:
@@ -33,11 +33,11 @@ class CreateRqtPkg:
         if author is not None:
             self.author = author[0]
         else:
-            self.author = 'Author'
+            self.author = 'todo'
         if email is not None:
             self.email = email[0]
         else:
-            self.email = 'blah@blah.com'
+            self.email = 'todo@todo.com'
         self.is_python = is_python
 
         dependencies_1 = ""
@@ -58,12 +58,12 @@ class CreateRqtPkg:
                               'dependencies_xml': dependencies_xml,
                               'pkg_name': self.pkg_name}
 
-        self.path = self.path_root + self.pkg_name
-        self.path_src = self.path + '/src/' + self.pkg_name
-        self.path_include = self.path + '/include/' + self.pkg_name
-        self.path_resource = self.path + '/resource'
-        self.path_scripts = self.path + '/scripts'
-        self.path_launch = self.path + '/launch'
+        self.path = os.path.join(self.path_root, self.pkg_name)
+        self.path_src = os.path.join(self.path, 'src', self.pkg_name)
+        self.path_include = os.path.join(self.path, 'include', self.pkg_name)
+        self.path_resource = os.path.join(self.path, 'resource')
+        self.path_scripts = os.path.join(self.path, 'scripts')
+        self.path_launch = os.path.join(self.path, 'launch')
 
         if not self.is_python:
             template_name = "rqt_template"
