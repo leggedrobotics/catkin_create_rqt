@@ -7,6 +7,7 @@ import stat
 
 from string import Template
 
+
 class CreateRqtPkg:
     def __init__(self, name, dependencies, path, class_name, namespace,
                  file_name, author, email, is_python):
@@ -64,9 +65,57 @@ class CreateRqtPkg:
         self.path_scripts = self.path + '/scripts'
         self.path_launch = self.path + '/launch'
 
+        if not self.is_python:
+            template_name = "rqt_template"
+        else:
+            template_name = "rqt_template_py"
+
+        files = []
+        files.append((os.path.join(self.path, 'setup.py'),
+                      os.path.join(template_name, 'setup.py')))
+        files.append((os.path.join(self.path, 'plugin.xml'),
+                      os.path.join(template_name, 'plugin.xml')))
+        files.append((os.path.join(self.path, 'package.xml'),
+                      os.path.join(template_name, 'package.xml')))
+        files.append((os.path.join(self.path, 'CMakeLists.txt'),
+                      os.path.join(template_name, 'CMakeLists.txt')))
+        files.append((os.path.join(self.path_scripts, self.pkg_name),
+                      os.path.join(template_name, 'scripts', template_name)))
+        files.append((os.path.join(self.path_launch, self.pkg_name + '.launch'),
+                      os.path.join(template_name, 'launch',
+                                   template_name + '.launch')))
+        if not self.is_python:
+            files.append((os.path.join(self.path_src, self.file_name + '.cpp'),
+                          os.path.join(template_name, 'src', template_name,
+                                       'Template.cpp')))
+            files.append((os.path.join(self.path_include,
+                                       self.file_name + '.h'),
+                          os.path.join(template_name, 'include', template_name,
+                                       'Template.h')))
+            files.append((os.path.join(self.path_resource,
+                                       self.file_name + '.ui'),
+                          os.path.join(template_name, 'resource',
+                                       'Template.ui')))
+        else:
+            files.append((os.path.join(self.path_src,
+                                       self.file_name + '.py'),
+                          os.path.join(template_name, 'src', template_name,
+                                       'Template.py')))
+            files.append((os.path.join(self.path_src,
+                                       self.file_name + '.ui'),
+                          os.path.join(template_name, 'src', template_name,
+                                       'Template.ui')))
+            files.append((os.path.join(self.path_src, '__init__.py'),
+                          None))
+        # generate directory tree
         self.mkdir()
-        self.create_build_files()
-        self.create_code_files()
+        # generate files
+        for t in files:
+            self.apply_template(t)
+        # make script executable
+        st = os.stat(os.path.join(self.path_scripts, self.pkg_name))
+        os.chmod(os.path.join(self.path_scripts, self.pkg_name),
+                 st.st_mode | stat.S_IEXEC)
 
     def mkdir(self):
         if os.path.exists(self.path):
@@ -86,176 +135,22 @@ class CreateRqtPkg:
         if not os.path.exists(self.path_launch):
             os.makedirs(self.path_launch)
 
-    def create_build_files(self):
-        # setup.py
+    def apply_template(self, path_tuple):
         try:
-            file_setup = open(self.path + "/setup.py", 'w')
-        except (OSError, IOError):
-            print('could not create setup.py')
+            file_out = open(path_tuple[0], 'w')
+        except (OSError, IOError) as os_io_error:
+            print('could not create ' + path_tuple[0])
+            print(os_io_error)
             sys.exit(0)
 
-        if not self.is_python:
-            file_in = open('rqt_template/setup.py')
-        else:
-            file_in = open('rqt_template_py/setup.py')
+        if path_tuple[1] is None:
+            file_out.close()
+            return
+
+        file_in = open(path_tuple[1])
         template = Template(file_in.read())
-        file_setup.write(template.substitute(self.template_fill))
-        file_setup.close()
-
-        # plugin.xml
-        try:
-            file_plugin = open(self.path + "/plugin.xml", 'w')
-        except (OSError, IOError):
-            print('could not create plugin.xml')
-            sys.exit(0)
-
-        if not self.is_python:
-            file_in = open('rqt_template/plugin.xml')
-        else:
-            file_in = open('rqt_template_py/plugin.xml')
-        template = Template(file_in.read())
-        file_plugin.write(template.substitute(self.template_fill))
-        file_plugin.close()
-
-        # package.xml
-        try:
-            file_package = open(self.path + "/package.xml", 'w')
-        except (OSError, IOError):
-            print('could not create package.xml')
-            sys.exit(0)
-
-        if not self.is_python:
-            file_in = open('rqt_template/package.xml')
-        else:
-            file_in = open('rqt_template_py/package.xml')
-        template = Template(file_in.read())
-        file_package.write(template.substitute(self.template_fill))
-        file_package.close()
-
-        # CMakeLists.txt
-        try:
-            file_cmake = open(self.path + "/CMakeLists.txt", 'w')
-        except (OSError, IOError):
-            print('could not create CMakeLists.txt')
-            sys.exit(0)
-
-        if not self.is_python:
-            file_in = open('rqt_template/CMakeLists.txt')
-        else:
-            file_in = open('rqt_template_py/CMakeLists.txt')
-        template = Template(file_in.read())
-        file_cmake.write(template.substitute(self.template_fill))
-        file_cmake.close()
-
-        # scripts
-        try:
-            file_scripts = open(self.path_scripts + '/' + self.pkg_name, 'w')
-        except (OSError, IOError):
-            print('could not create script ' + self.pkg_name + '')
-            sys.exit(0)
-
-        if not self.is_python:
-            file_in = open('rqt_template/scripts/rqt_template')
-        else:
-            file_in = open('rqt_template_py/scripts/rqt_template_py')
-        template = Template(file_in.read())
-        file_scripts.write(template.substitute(self.template_fill))
-        file_scripts.close()
-        # make script executable
-        st = os.stat(self.path_scripts + '/' + self.pkg_name)
-        os.chmod(self.path_scripts + '/' + self.pkg_name,
-                 st.st_mode | stat.S_IEXEC)
-
-        # launch
-        try:
-            file_launch = open(self.path_launch + '/' + self.pkg_name +
-                               '.launch', 'w')
-        except (OSError, IOError):
-            print('could not create script ' + self.path_launch + '/' +
-                  self.pkg_name + '.launch')
-            sys.exit(0)
-
-        if not self.is_python:
-            file_in = open('rqt_template/launch/rqt_template.launch')
-        else:
-            file_in = open('rqt_template_py/launch/rqt_template_py.launch')
-        template = Template(file_in.read())
-        file_launch.write(template.substitute(self.template_fill))
-        file_launch.close()
-
-    def create_code_files(self):
-        if not self.is_python:
-            # cpp
-            try:
-                file_cpp = open(self.path_src + '/' + self.file_name + '.cpp',
-                                'w')
-            except (OSError, IOError):
-                print('could not create ' + self.path_src + '/' +
-                      self.file_name + '.cpp')
-                sys.exit(0)
-
-            file_in = open('rqt_template/src/rqt_template/Template.cpp')
-            template = Template(file_in.read())
-            file_cpp.write(template.substitute(self.template_fill))
-            file_cpp.close()
-
-            # h
-            try:
-                file_h = open(self.path_include + '/' + self.file_name + '.h',
-                              'w')
-            except (OSError, IOError):
-                print('could not create ' + self.path_include + '/' +
-                      self.file_name + '.h')
-                sys.exit(0)
-
-            file_in = open('rqt_template/include/rqt_template/Template.h')
-            template = Template(file_in.read())
-            file_h.write(template.substitute(self.template_fill))
-            file_h.close()
-
-        else:
-            # py
-            try:
-                file_py = open(self.path_src + '/' + self.file_name + '.py',
-                               'w')
-            except (OSError, IOError):
-                print('could not create ' + self.path_src + '/' +
-                      self.file_name + '.py')
-                sys.exit(0)
-
-            file_in = open('rqt_template_py/src/rqt_template_py/Template.py')
-            template = Template(file_in.read())
-            file_py.write(template.substitute(self.template_fill))
-            file_py.close()
-
-            # init py
-            try:
-                file_py = open(self.path_src + '/__init__.py', 'w')
-            except (OSError, IOError):
-                print('could not create ' + self.path_src + '/__init__.py')
-                sys.exit(0)
-            file_py.close()
-
-        # ui
-        try:
-            if not self.is_python:
-                file_ui = open(self.path_resource + '/' + self.file_name +
-                               '.ui', 'w')
-            else:
-                file_ui = open(self.path_src + '/' + self.class_name + '.ui',
-                               'w')
-        except (OSError, IOError):
-            print('could not create ' + self.path_resource + '/' +
-                  self.file_name + '.ui')
-            sys.exit(0)
-
-        if not self.is_python:
-            file_in = open('rqt_template/resource/Template.ui')
-        else:
-            file_in = open('rqt_template_py/src/rqt_template_py/Template.ui')
-        template = Template(file_in.read())
-        file_ui.write(template.substitute(self.template_fill))
-        file_ui.close()
+        file_out.write(template.substitute(self.template_fill))
+        file_out.close()
 
 
 if __name__ == '__main__':
