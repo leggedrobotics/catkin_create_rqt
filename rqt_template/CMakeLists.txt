@@ -30,6 +30,10 @@ set($${PROJECT_NAME}_UIS
   resource/${file_name}.ui
 )
 
+set($${PROJECT_NAME}_QRC
+  resource/resources.qrc
+)
+
 set(ui_INCLUDE_DIR
   "$${CATKIN_DEVEL_PREFIX}/$${CATKIN_GLOBAL_INCLUDE_DESTINATION}/$${PROJECT_NAME}"
 )
@@ -55,8 +59,10 @@ ${dependencies_2}
 
 if ("$${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
   qt5_wrap_cpp($${PROJECT_NAME}_MOCS $${$${PROJECT_NAME}_HDRS})
+  qt5_add_resources($${PROJECT_NAME}_RCC $${$${PROJECT_NAME}_QRC})
 else()
   qt4_wrap_cpp($${PROJECT_NAME}_MOCS $${$${PROJECT_NAME}_HDRS})
+  qt4_add_resources($${PROJECT_NAME}_RCC $${$${PROJECT_NAME}_QRC})
 endif()
 
 # ensure generated header files are being created in the devel space
@@ -79,7 +85,9 @@ add_library($${PROJECT_NAME}
   $${$${PROJECT_NAME}_HDRS}
   $${$${PROJECT_NAME}_MOCS}
   $${$${PROJECT_NAME}_UIS_H}
+  $${$${PROJECT_NAME}_RCC}
 )
+
 target_link_libraries($${PROJECT_NAME}
   $${catkin_LIBRARIES}
 )
@@ -114,3 +122,11 @@ install(PROGRAMS scripts/$${PROJECT_NAME}
 install(DIRECTORY include/$${PROJECT_NAME}/
   DESTINATION $${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
+
+#install(
+#  DIRECTORY resource
+#  DESTINATION $${CATKIN_PACKAGE_SHARE_DESTINATION}
+#  FILES_MATCHING
+#  PATTERN "*.png"
+#  PATTERN "*.svg"
+#)

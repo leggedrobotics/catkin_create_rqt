@@ -96,6 +96,10 @@ class CreateRqtPkg:
                                        self.file_name + '.ui'),
                           os.path.join(template_name, 'resource',
                                        'Template.ui')))
+            files.append((os.path.join(self.path_resource,
+                                       'resources.qrc'),
+                          os.path.join(template_name, 'resource',
+                                       'resources.qrc')))
         else:
             files.append((os.path.join(self.path_src,
                                        self.file_name + '.py'),
