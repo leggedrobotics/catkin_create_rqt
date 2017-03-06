@@ -1,7 +1,7 @@
 #pragma once
 
 #include <rqt_gui_cpp/plugin.h>
-#include <ui_${file_name}.h>
+#include <${pkg_name}/ui_${file_name}.h>
 
 #include <ros/ros.h>
 
