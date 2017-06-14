@@ -65,8 +65,8 @@ include_directories($${$${PROJECT_NAME}_INCLUDE_DIRECTORIES}
 
 
 if ("$${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
-  include_directories(${Qt5Widgets_INCLUDE_DIRS})
-  add_definitions(${Qt5Widgets_DEFINITIONS})
+  include_directories($${Qt5Widgets_INCLUDE_DIRS})
+  add_definitions($${Qt5Widgets_DEFINITIONS})
   qt5_wrap_cpp($${PROJECT_NAME}_MOCS $${$${PROJECT_NAME}_HDRS})
   qt5_add_resources($${PROJECT_NAME}_RCC $${$${PROJECT_NAME}_QRC})
 else()
