@@ -4,12 +4,20 @@
 
 namespace ${namespace} {
 
+/* ========================================================================== */
+/* Constructor/Destructor                                                     */
+/* ========================================================================== */
+
 ${class_name}::${class_name}()
-    : rqt_gui_cpp::Plugin()
-    , widget_(0) {
+    : rqt_gui_cpp::Plugin(),
+      widget_(nullptr) {
 
   setObjectName("${class_name}");
 }
+
+/* ========================================================================== */
+/* Initialize/Shutdown                                                        */
+/* ========================================================================== */
 
 void ${class_name}::initPlugin(qt_gui_cpp::PluginContext& context) {
   widget_ = new QWidget();
@@ -24,14 +32,51 @@ void ${class_name}::initPlugin(qt_gui_cpp::PluginContext& context) {
 void ${class_name}::shutdownPlugin() {
 }
 
-void ${class_name}::saveSettings(qt_gui_cpp::Settings& plugin_settings,
-                                 qt_gui_cpp::Settings& instance_settings) const {
+/* ========================================================================== */
+/* Settings                                                                   */
+/* ========================================================================== */
+
+void ${class_name}::saveSettings(
+    qt_gui_cpp::Settings& plugin_settings,
+    qt_gui_cpp::Settings& instance_settings) const {
 }
 
-void ${class_name}::restoreSettings(const qt_gui_cpp::Settings& plugin_settings,
-                                    const qt_gui_cpp::Settings& instance_settings) {
+void ${class_name}::restoreSettings(
+    const qt_gui_cpp::Settings& plugin_settings,
+    const qt_gui_cpp::Settings& instance_settings) {
 }
+
+/* ========================================================================== */
+/* Methods                                                                    */
+/* ========================================================================== */
+
+
+
+/* ========================================================================== */
+/* Events                                                                     */
+/* ========================================================================== */
+
+
+
+/* ========================================================================== */
+/* Callbacks                                                                  */
+/* ========================================================================== */
+
+
+
+/* ========================================================================== */
+/* Slots                                                                      */
+/* ========================================================================== */
+
+
+
+/* ========================================================================== */
+/* Signals                                                                    */
+/* ========================================================================== */
+
+
 
 } // namespace
 
-PLUGINLIB_EXPORT_CLASS(${namespace}::${class_name}, rqt_gui_cpp::Plugin)
+PLUGINLIB_EXPORT_CLASS(${namespace}::${class_name},
+                       rqt_gui_cpp::Plugin)

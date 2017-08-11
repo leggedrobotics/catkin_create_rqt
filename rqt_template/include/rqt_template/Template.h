@@ -10,50 +10,86 @@
 
 namespace ${namespace} {
 
-class ${class_name}
-    : public rqt_gui_cpp::Plugin {
-
-  Q_OBJECT
+class ${class_name} : public rqt_gui_cpp::Plugin {
+Q_OBJECT
 
 public:
-  /**
-   * @brief $class_name
-   */
+
+  /* ======================================================================== */
+  /* Constructor/Destructor                                                   */
+  /* ======================================================================== */
+
   ${class_name}();
 
-  /**
-   * @brief initPlugin
-   * @param context
-   */
-  virtual void initPlugin(qt_gui_cpp::PluginContext& context);
+  /* ======================================================================== */
+  /* Initialize/Shutdown                                                      */
+  /* ======================================================================== */
 
-  /**
-   * @brief shutdownPlugin
-   */
-  virtual void shutdownPlugin();
+  void initPlugin(qt_gui_cpp::PluginContext& context) override;
 
-  /**
-   * @brief saveSettings
-   * @param plugin_settings
-   * @param instance_settings
-   */
-  virtual void saveSettings(qt_gui_cpp::Settings& plugin_settings,
-                            qt_gui_cpp::Settings& instance_settings) const;
+  void shutdownPlugin() override;
 
-  /**
-   * @brief restoreSettings
-   * @param plugin_settings
-   * @param instance_settings
-   */
-  virtual void restoreSettings(const qt_gui_cpp::Settings& plugin_settings,
-                               const qt_gui_cpp::Settings& instance_settings);
+  /* ======================================================================== */
+  /* Settings                                                                 */
+  /* ======================================================================== */
+
+  void saveSettings(qt_gui_cpp::Settings& plugin_settings,
+                    qt_gui_cpp::Settings& instance_settings) const override;
+
+  void restoreSettings(const qt_gui_cpp::Settings& plugin_settings,
+                       const qt_gui_cpp::Settings& instance_settings) override;
+
+private:
+
+  /* ======================================================================== */
+  /* Constants                                                                */
+  /* ======================================================================== */
+
+  const std::string TAG = "${class_name}";
+
+  /* ======================================================================== */
+  /* Variables                                                                */
+  /* ======================================================================== */
+
+  Ui::${class_name}Widget ui_;
+  QWidget* widget_;
+
+  ros::NodeHandle nh_;
+
+  /* ======================================================================== */
+  /* Methods                                                                  */
+  /* ======================================================================== */
+
+
+
+  /* ======================================================================== */
+  /* Events                                                                   */
+  /* ======================================================================== */
+
+
+
+  /* ======================================================================== */
+  /* Callbacks                                                                */
+  /* ======================================================================== */
+
+
 
 protected slots:
 
-protected:
-  Ui::${class_name}Widget ui_;
-  QWidget* widget_;
-  ros::NodeHandle nh_;
+  /* ======================================================================== */
+  /* Slots                                                                    */
+  /* ======================================================================== */
+
+
+
+signals:
+
+  /* ======================================================================== */
+  /* Signals                                                                  */
+  /* ======================================================================== */
+
+
+
 };
 
 } // namespace

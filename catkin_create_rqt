@@ -92,9 +92,8 @@ class CreateRqtPkg:
                                        self.file_name + '.h'),
                           os.path.join(template_name, 'include', template_name,
                                        'Template.h')))
-            files.append((os.path.join(self.path_resource,
-                                       self.file_name + '.ui'),
-                          os.path.join(template_name, 'resource',
+            files.append((os.path.join(self.path_src, self.file_name + '.ui'),
+                          os.path.join(template_name, 'src', template_name,
                                        'Template.ui')))
             files.append((os.path.join(self.path_resource,
                                        'resources.qrc'),

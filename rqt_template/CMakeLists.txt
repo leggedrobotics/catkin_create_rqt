@@ -27,7 +27,7 @@ set($${PROJECT_NAME}_HDRS
 )
 
 set($${PROJECT_NAME}_UIS
-  resource/${file_name}.ui
+  src/$${PROJECT_NAME}/${file_name}.ui
 )
 
 set($${PROJECT_NAME}_QRC
