@@ -128,7 +128,7 @@ install(DIRECTORY include/$${PROJECT_NAME}/
 )
 
 # uncomment, if this widget will be used by any other QObject (e.g., a widget)
-#install(DIRECTORY ${ui_INCLUDE_DIR}/..
+#install(DIRECTORY ${ui_INCLUDE_DIR}/
 #  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 #)
 
